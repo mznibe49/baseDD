@@ -1,1 +1,5 @@
 // a jouter : si un projet est finis, on le supp de la table project et on l'ajoute dans la table archive
+// contraint ajouter ( nom matiere unique ) on veut pas avoir deux mm matiere
+// contraint ajouter ( par defaut cagnote , reserve , somme gagnee sont a 0) ca nous evitera de mettre des triggers en plus ( a testé)
+// contraint l attribut en attente est initialisé a faulse
+

@@ -1,4 +1,3 @@
-
 -- verification du sex
 CREATE TRIGGER trigger_sex_user
 BEFORE INSERT ON User
@@ -13,21 +12,6 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-
-
--- initialisation de "en attente" des parents
-CREATE TRIGGER trigger_init_en_attente
-BEFORE INSERT ON Parent
-FOR EACH ROW EXECUTE PROCEDURE check_init_en_attente();
-
-CREATE FUNCTION check_init_en_attente() RETURNS trigger as $$
-BEGIN
-  IF NEW.en_attente != 0 THEN
-    RAISE NOTICE 'err dans l insertion de l attribut en attente chez un parent';
-    RETURN NULL;
-  END IF;
-END;
-$$ LANGUAGE plpgsql;
 
 
 -- mise a joute de "en attente" des parents
@@ -45,31 +29,14 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- echec dans le cas ou le prix payé est < 8
-
 CREATE TRIGGER trigger_payement
 BEFORE INSERT ON Inscription
 FOR EACH ROW EXECUTE PROCEDURE check_payement();
-
 
 CREATE FUNCTION check_payement() RETURNS trigger as $$
 BEGIN
   IF NEW.prix < 8 THEN
     RAISE NOTICE 'prix payement inferieur a 8';
-    RETURN NULL;
-  END IF;
-END;
-$$ LANGUAGE plpgsql;
-
-
--- verifier la somme gagnee a l'initialisation
-CREATE TRIGGER trigger_init_somme_gagnee
-BEFORE INSERT ON Enseignant
-FOR EACH ROW EXECUTE PROCEDURE check_init_somme_gagnne();
-
-CREATE FUNCTION check_init_somme_gagnne() RETURNS trigger as $$
-BEGIN
-  IF NEW.somme_gagnee != 0 THEN
-    RAISE NOTICE 'initialisation de somme gagnee chez un enseignant erroné';
     RETURN NULL;
   END IF;
 END;
@@ -89,6 +56,22 @@ BEGIN
   END IF;
 END;
 $$ LANGUAGE plpgsql;
+
+--- verifie la matiere de l'enseignant ----
+CREATE TRIGGER trigger_check_matiere_gagnee
+BEFORE UPDATE ON Enseignant
+FOR EACH ROW EXECUTE PROCEDURE check_matiere();
+
+CREATE FUNCTION check_matiere() RETURNS trigger as $$
+BEGIN
+  IF (select count(*) from Matiere where Matiere.id = New.id_matiere) != 1  THEN
+    RAISE NOTICE 'err : Matiere enseignant introuvable dans table matiere';
+    RETURN NULL;
+  END IF;
+END;
+$$ LANGUAGE plpgsql;
+
+
 
 
 -- verifier s'il y a assez d'argent dans la reserve_solidarite
@@ -161,38 +144,6 @@ CREATE FUNCTION verification_objectif() RETURNS trigger as $$
 $$ LANGUAGE plpgsql;
 
 
--- verification cagnotte insertion Projet
-
-CREATE TRIGGER trigger_insert_projet_cagnotte
-BEFORE INSERT ON Projet
-FOR EACH ROW EXECUTE PROCEDURE verification_cagnotte();
-
-CREATE FUNCTION verification_cagnotte() RETURNS trigger as $$
-  BEGIN
-    IF NEW.cagnotte != 0 THEN
-      RAISE NOTICE 'err : cagnotte initialisé != 0';
-      RETURN NULL;
-    END IF;
-  END;
-
-$$ LANGUAGE plpgsql;
-
--- verification reserve_solidarite insertion Projet
-
-CREATE TRIGGER trigger_insert_projet_solidatire
-BEFORE INSERT ON Projet
-FOR EACH ROW EXECUTE PROCEDURE verification_reserve();
-
-CREATE FUNCTION verification_reserve() RETURNS trigger as $$
-  BEGIN
-    IF NEW.reserve_solidarite != 0 THEN
-      RAISE NOTICE 'err : reserve initialisé != 0';
-      RETURN NULL;
-    END IF;
-  END;
-$$ LANGUAGE plpgsql;
-
-
 -- verification date debut < date fin
 CREATE TRIGGER check_dates_projet
 BEFORE INSERT ON Projet
@@ -210,7 +161,6 @@ $$ LANGUAGE plpgsql;
 
 
 ------ verifier date avant creation de projet ---
-
 CREATE TRIGGER check_dates_projet_insert
 BEFORE INSERT ON Projet
 for each statement execute procedure check_date_insert();
@@ -225,3 +175,39 @@ BEGIN
     END IF;
 END;
 $$ LANGUAGE plpgsql;
+
+
+-- verification cagnotte insertion Archivage
+CREATE TRIGGER trigger_insert_archive_cagnotte
+BEFORE INSERT ON Archive
+FOR EACH ROW EXECUTE PROCEDURE verification_cagnotte();
+
+CREATE FUNCTION verification_cagnotte() RETURNS trigger as $$
+  BEGIN
+    IF NEW.cagnotte != 0 THEN
+      RAISE NOTICE 'err : cagnotte initialisé != 0';
+      RETURN NULL;
+    END IF;
+  END;
+
+--$$ LANGUAGE plpgsql;
+
+
+
+-- verification cagnotte insertion Archivage
+CREATE TRIGGER trigger_insert_archive_reserve
+BEFORE INSERT ON Archive
+FOR EACH ROW EXECUTE PROCEDURE verification_reserve();
+
+CREATE FUNCTION verification_reserve() RETURNS trigger as $$
+  BEGIN
+    IF NEW.reserve_solidarite != 0 THEN
+      RAISE NOTICE 'err : reserve initialisé != 0';
+      RETURN NULL;
+    END IF;
+  END;
+
+--$$ LANGUAGE plpgsql;
+
+
+----- triggers date fic -----

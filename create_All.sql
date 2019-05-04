@@ -1,7 +1,3 @@
-
-
-
-
 CREATE TABLE myDate
 (
   date_fictive TIMESTAMP NOT NULL
@@ -22,10 +18,8 @@ CREATE TABLE Inscription( -- 1
 CREATE TABLE Cours( -- 2
     id SERIAL,
     date_cours TIMESTAMP NOT NULL,
-    --id_inscription INT,
     id_enseignant INT NOT NULL,
     PRIMARY KEY(id),
-    --FOREIGN KEY(id_inscription) REFERENCES Inscription(id),
     FOREIGN KEY(id_enseignant) REFERENCES Enseignant(id)
 );
 
@@ -37,9 +31,9 @@ CREATE TABLE Projet( -- 3
     nom VARCHAR(100) NOT NULL UNIQUE,
     date_debut TIMESTAMP NOT NULL,
     date_fin TIMESTAMP NOT NULL,
-    objectif INT NOT NULL,
-    cagnotte INT NOT NULL,
-    reserve_solidarite INT NOT NULL,
+    objectif INT NOT NULL default 0,
+    cagnotte INT NOT NULL default 0,
+    reserve_solidarite INT NOT NULL default 0,
     id_association INT NOT NULL,
     PRIMARY KEY(id),
     FOREIGN KEY(id_association) REFERENCES Association(id)
@@ -57,7 +51,7 @@ CREATE TABLE Association( -- 4
 );
 
 CREATE TABLE User ( -- 5
-    id SERIAL,
+  id SERIAL,
   nom varchar(20) NOT NULL,
   prenom varchar(20) NOT NULL,
   sexe char(1) NOT NULL,
@@ -69,7 +63,7 @@ CREATE UNIQUE INDEX ind_nom_prenom_user ON User (nom,prenom);
 
 CREATE TABLE Parent
 ( -- 6
-    en_attente boolean NOT NULL
+    en_attente boolean NOT NULL default false
 ) INHERITS (User);
 
 CREATE INDEX ind_en_attente ON Parent(en_attente);
@@ -84,7 +78,7 @@ CREATE TABLE Eleve
 
 CREATE TABLE Enseignant
 ( -- 8
-    somme_gagnee INT NOT NULL,
+    somme_gagnee INT NOT NULL default 0,
     id_matiere   INT NOT NULL,
     FOREIGN KEY (id_matiere) REFERENCES Matiere (id)
 ) INHERITS (User);
