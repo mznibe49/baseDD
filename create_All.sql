@@ -105,3 +105,9 @@ CREATE TABLE Ecole
 );
 
 CREATE UNIQUE INDEX ind_nom_adresse_ecole ON Ecole (nom,adresse);
+
+CREATE  TABLE Archive
+(
+    id SERIAL,
+
+);
