@@ -1,6 +1,4 @@
 
-
-
 -------- Utilisateurs --------
 
 -------- Eleve --------
@@ -52,12 +50,26 @@ INSERT INTO Enseignant (id, nom, prenom, sexe, somme_gagnee, id_matiere) VALUES 
 INSERT INTO Enseignant (id, nom, prenom, sexe, somme_gagnee, id_matiere) VALUES (34, 'Bouamra', 'Malek', 'M', 0, 4);
 
 
+INSERT INTO Enseignant (id, nom, prenom, sexe, somme_gagnee, id_matiere) VALUES (35, 'LeMaire', 'Samantha', 'F', 0, 1);
+INSERT INTO Enseignant (id, nom, prenom, sexe, somme_gagnee, id_matiere) VALUES (36, 'Sveth', 'Samuel', 'M', 0, 3);
+INSERT INTO Enseignant (id, nom, prenom, sexe, somme_gagnee, id_matiere) VALUES (37, 'Cure', 'Lisa', 'F', 0, 4);
+
+INSERT INTO Enseignant (id, nom, prenom, sexe, somme_gagnee, id_matiere) VALUES (38, 'Marneau', 'Julien', 'M', 0, 1);
+INSERT INTO Enseignant (id, nom, prenom, sexe, somme_gagnee, id_matiere) VALUES (39, 'Nieniel', 'Diandra', 'F', 0, 2);
+INSERT INTO Enseignant (id, nom, prenom, sexe, somme_gagnee, id_matiere) VALUES (40, 'Bouamra', 'Malek', 'M', 0, 4);
+
+
 -------- Ecoles --------
 
 INSERT INTO Ecole VALUES (1, '5 rue Thomas Mann', 'Paris Diderot');
-INSERT INTO Ecole VALUES (2, '7 rue de Picpus', 'Ecole Lefevre');
-INSERT INTO Ecole VALUES (3, '7 rue de Picpus', 'Ecole Infirmiere');
-
+INSERT INTO Ecole VALUES (2, '12 rue de test1', 'Ecole Lefevre');
+INSERT INTO Ecole VALUES (3, '33 rue de test2', 'Dauphine');
+INSERT INTO Ecole VALUES (4, '42 rue de test3', 'Sorbone');
+INSERT INTO Ecole VALUES (5, '24 rue de test4', 'Euclide');
+INSERT INTO Ecole VALUES (6, '11 rue de test5', 'Ibn Cina');
+INSERT INTO Ecole VALUES (7, '41 rue de test6', 'Jean jack hamid');
+INSERT INTO Ecole VALUES (8, '16 rue de test7', 'Spinoza');
+INSERT INTO Ecole VALUES (9, '99 rue de test8', 'Alhabus');
 
 -------- Matieres --------
 
@@ -76,6 +88,7 @@ INSERT INTO Association VALUES(4, 'Sidaction');
 
 
 -------- Projet --------
+
 INSERT INTO Projet VALUES(1,'nom_projet1','2019-01-02 00:00:00.000','2019-05-02 00:00:00.000',200,0,0,1);
 INSERT INTO Projet VALUES(2,'nom_projet2','2019-01-02 00:00:00.000','2019-05-02 00:00:00.000',200,0,0,1);
 
@@ -93,14 +106,33 @@ INSERT INTO Inscription VALUES(8,10,8,8,8);
 
 -------- Cours --------
 
-INSERT INTO Cours VALUES(1,'2019-01-03 00:00:00.000' ,1);
-INSERT INTO Cours VALUES(2,'2019-01-04 00:00:00.000' ,2);
-INSERT INTO Cours VALUES(3,'2019-01-05 00:00:00.000' ,3);
-INSERT INTO Cours VALUES(4,'2019-01-06 00:00:00.000' ,4);
-INSERT INTO Cours VALUES(5,'2019-01-07 00:00:00.000' ,5);
-INSERT INTO Cours VALUES(6,'2019-01-08 00:00:00.000' ,6);
-INSERT INTO Cours VALUES(7,'2019-01-09 00:00:00.000' ,7);
-INSERT INTO Cours VALUES(8,'2019-01-10 00:00:00.000' ,8);
+INSERT INTO Cours VALUES(1,'2019-01-03 00:00:00.000' ,25);
+INSERT INTO Cours VALUES(2,'2019-01-04 00:00:00.000' ,26);
+INSERT INTO Cours VALUES(3,'2019-01-05 00:00:00.000' ,27);
+INSERT INTO Cours VALUES(4,'2019-01-06 00:00:00.000' ,28);
+INSERT INTO Cours VALUES(5,'2019-01-07 00:00:00.000' ,29);
+INSERT INTO Cours VALUES(6,'2019-01-08 00:00:00.000' ,30);
+INSERT INTO Cours VALUES(7,'2019-01-09 00:00:00.000' ,31);
+INSERT INTO Cours VALUES(8,'2019-01-10 00:00:00.000' ,32);
+
+INSERT INTO Cours VALUES(9, '2019-01-03 00:00:00.000' ,33);
+INSERT INTO Cours VALUES(10,'2019-01-04 00:00:00.000' ,34);
+INSERT INTO Cours VALUES(11,'2019-01-05 00:00:00.000' ,35);
+INSERT INTO Cours VALUES(12,'2019-01-06 00:00:00.000' ,36);
+INSERT INTO Cours VALUES(13,'2019-01-07 00:00:00.000' ,37);
+INSERT INTO Cours VALUES(14,'2019-01-08 00:00:00.000' ,38);
+INSERT INTO Cours VALUES(15,'2019-01-09 00:00:00.000' ,39);
+INSERT INTO Cours VALUES(16,'2019-01-10 00:00:00.000' ,40);
+
+INSERT INTO Cours VALUES(17,'2019-01-03 00:00:00.000' ,31);
+INSERT INTO Cours VALUES(18,'2019-01-04 00:00:00.000' ,32);
+INSERT INTO Cours VALUES(19,'2019-01-05 00:00:00.000' ,33);
+INSERT INTO Cours VALUES(20,'2019-01-06 00:00:00.000' ,34);
+INSERT INTO Cours VALUES(21,'2019-01-07 00:00:00.000' ,25);
+INSERT INTO Cours VALUES(22,'2019-01-08 00:00:00.000' ,26);
+INSERT INTO Cours VALUES(23,'2019-01-09 00:00:00.000' ,27);
+INSERT INTO Cours VALUES(24,'2019-01-10 00:00:00.000' ,28);
+
 
 
 
@@ -108,11 +140,4 @@ INSERT INTO Cours VALUES(8,'2019-01-10 00:00:00.000' ,8);
 
 --- ici on a une seul date fictif currDate avec laquelle on va comparer les autre
 INSERT INTO myDate VALUES('2019-01-02 00:00:00.000');
-
-
-
-
-
-
-
 

@@ -1,3 +1,4 @@
+
 -- verification du sex
 CREATE TRIGGER trigger_sex_user
 BEFORE INSERT ON User
@@ -6,6 +7,7 @@ FOR EACH ROW EXECUTE PROCEDURE check_sex_user();
 CREATE FUNCTION check_sex_user() RETURNS trigger AS $$
 BEGIN
   IF NEW.sexe != 'M' AND NEW.sexe != 'F' THEN
+    RAISE NOTICE 'err dans l insertion du sex de l user';
     RETURN NULL;
   END IF;
 END;
@@ -21,10 +23,12 @@ FOR EACH ROW EXECUTE PROCEDURE check_init_en_attente();
 CREATE FUNCTION check_init_en_attente() RETURNS trigger as $$
 BEGIN
   IF NEW.en_attente != 0 THEN
+    RAISE NOTICE 'err dans l insertion de l attribut en attente chez un parent';
     RETURN NULL;
   END IF;
 END;
 $$ LANGUAGE plpgsql;
+
 
 -- mise a joute de "en attente" des parents
 CREATE TRIGGER trigger_en_attente
@@ -34,6 +38,7 @@ FOR EACH ROW EXECUTE PROCEDURE check_en_attente();
 CREATE FUNCTION check_en_attente() RETURNS trigger as $$
 BEGIN
   IF NEW.en_attente != 0 AND NEW.en_attente != 1 THEN
+    RAISE NOTICE 'mise a jour de l attribut en attente erroné';
     RETURN NULL;
   END IF;
 END;
@@ -49,8 +54,9 @@ FOR EACH ROW EXECUTE PROCEDURE check_payement();
 CREATE FUNCTION check_payement() RETURNS trigger as $$
 BEGIN
   IF NEW.prix < 8 THEN
+    RAISE NOTICE 'prix payement inferieur a 8';
     RETURN NULL;
-    END IF;
+  END IF;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -63,6 +69,7 @@ FOR EACH ROW EXECUTE PROCEDURE check_init_somme_gagnne();
 CREATE FUNCTION check_init_somme_gagnne() RETURNS trigger as $$
 BEGIN
   IF NEW.somme_gagnee != 0 THEN
+    RAISE NOTICE 'initialisation de somme gagnee chez un enseignant erroné';
     RETURN NULL;
   END IF;
 END;
@@ -77,6 +84,7 @@ FOR EACH ROW EXECUTE PROCEDURE check_somme_gagnnee();
 CREATE FUNCTION check_somme_gagnnee() RETURNS trigger as $$
 BEGIN
   IF NEW.somme_gagnee < OLD.somme_gagnee THEN
+    RAISE NOTICE 'err : nv somme gagnee est inf a l ancienne somme stoqué';
     RETURN NULL;
   END IF;
 END;
@@ -110,6 +118,7 @@ CREATE FUNCTION prix_reserve() RETURNS trigger as $$
     UPDATE Projet
     SET reserve_solidarite = reserve_solidarite + (NEW.prix - 10)
     where id = NEW.id_projet;
+    RAISE NOTICE 'prix supp a 10 est l ajoute a la reserve solidarité est fait';
     RETURN NEW;
   END;
 $$ LANGUAGE plpgsql;
@@ -130,6 +139,8 @@ CREATE FUNCTION prix_repartition() RETURNS trigger as $$
     SET somme_gagnee = somme_gagnee + 4
     where id = (select id_enseignant from Cours where Cours.id = NEW.id_cours);
 
+    RAISE NOTICE 'distribution faite avec succes';
+
     RETURN NEW;
   END;
 $$ LANGUAGE plpgsql;
@@ -143,6 +154,7 @@ FOR EACH ROW EXECUTE PROCEDURE verification_objectif();
 CREATE FUNCTION verification_objectif() RETURNS trigger as $$
   BEGIN
     IF NEW.objectif < 0 THEN
+      RAISE NOTICE 'err objectif projet neg';
       RETURN NULL;
     END IF;
   END;
@@ -158,6 +170,7 @@ FOR EACH ROW EXECUTE PROCEDURE verification_cagnotte();
 CREATE FUNCTION verification_cagnotte() RETURNS trigger as $$
   BEGIN
     IF NEW.cagnotte != 0 THEN
+      RAISE NOTICE 'err : cagnotte initialisé != 0';
       RETURN NULL;
     END IF;
   END;
@@ -173,28 +186,11 @@ FOR EACH ROW EXECUTE PROCEDURE verification_reserve();
 CREATE FUNCTION verification_reserve() RETURNS trigger as $$
   BEGIN
     IF NEW.reserve_solidarite != 0 THEN
+      RAISE NOTICE 'err : reserve initialisé != 0';
       RETURN NULL;
     END IF;
   END;
 $$ LANGUAGE plpgsql;
-
-
-
--- insertion date ----
-
--- verifier la matiere du cours
-
---CREATE TRIGGER trigger_check_matiere_cours
---BEFORE INSERT ON Cours
---FOR EACH ROW EXECUTE PROCEDURE check_matiere_cours();
-
---CREATE FUNCTION check_matiere_cours() RETURNS trigger as $$
---BEGIN
-  --IF ( SELECT COUNT (*) FROM Matiere WHERE Matiere.id = Cours.id_matiere) != 1 THEN
-	--RETURN NULL;
-  --END IF;
---END;
---$$ LANGUAGE plpgsql;
 
 
 -- verification date debut < date fin
@@ -205,6 +201,7 @@ for each statement execute procedure check_date();
 CREATE FUNCTION check_date() RETURNS trigger as $$
 BEGIN
     IF date_debut < date_fin THEN
+        RAISE NOTICE 'err : date_debut < date_fin (meme projet)';
         RETURN NULL;
     END IF;
 END;
@@ -223,7 +220,8 @@ CREATE FUNCTION check_date_insert() RETURNS trigger as $$
 BEGIN
     --- on recupere fin la date du dernier projet et on compare avec date debut du nouveau (on doit pas avoir deux en mm temps
     IF New.date_debut < (select date_fin from Projet  where id = (SELECT MAX(id) FROM Projet)) THEN
-        RETURN NULL;
+      RAISE NOTICE 'err : date debut nv projet < date fin ancien projet';
+      RETURN NULL;
     END IF;
 END;
-$$ LANGUAGE plpgsql
+$$ LANGUAGE plpgsql;
