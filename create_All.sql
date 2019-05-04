@@ -109,5 +109,13 @@ CREATE UNIQUE INDEX ind_nom_adresse_ecole ON Ecole (nom,adresse);
 CREATE  TABLE Archive
 (
     id SERIAL,
-
+    nom VARCHAR(100) NOT NULL UNIQUE,
+    date_debut TIMESTAMP NOT NULL,
+    date_fin TIMESTAMP NOT NULL,
+    objectif INT NOT NULL,
+    cagnotte INT NOT NULL,
+    reserve_solidarite INT NOT NULL,
+    id_association INT NOT NULL,
+    PRIMARY KEY(id),
+    FOREIGN KEY(id_association) REFERENCES Association(id)
 );
