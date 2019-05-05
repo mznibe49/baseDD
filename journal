@@ -3,3 +3,8 @@
 // contraint ajouter ( par defaut cagnote , reserve , somme gagnee sont a 0) ca nous evitera de mettre des triggers en plus ( a testé)
 // contraint l attribut en attente est initialisé a faulse
 
+// ajout trigger compte rendu tout les 25% de temps (avec un raise) --> fait
+// modification de distribution apres 75% (faire une annonce avec un raise) --> pas fait
+// interdire une deuxieme inscription si l'attente d'un pere est true --> fait
+
+// faudra rajouter des triggers jpense quand on fait des insert verifier que le id_parent est bien un parent
