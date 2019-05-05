@@ -1,6 +1,9 @@
+
+
+
 -- verification du sex
 CREATE TRIGGER trigger_sex_user
-BEFORE INSERT ON User
+BEFORE INSERT ON myUser
 FOR EACH ROW EXECUTE PROCEDURE check_sex_user();
 
 CREATE FUNCTION check_sex_user() RETURNS trigger AS $$
@@ -10,6 +13,23 @@ BEGIN
     RETURN NULL;
   END IF;
 END;
+$$ LANGUAGE plpgsql;
+
+
+--trigger verifie si id parent est bien un parent
+
+CREATE TRIGGER trigger_ajout_eleve
+BEFORE INSERT ON Eleve
+FOR EACH ROW EXECUTE PROCEDURE check_parent();
+
+CREATE FUNCTION check_parent() RETURNS trigger AS $$
+DECLARE all_parent Parent;
+BEGIN
+    SELECT * INTO all_parent FROM Parent where id = NEW.id_parent;
+    IF NOT FOUND THEN RAISE NOTICE 'Le parent n existe pas';
+    RETURN NULL;
+    END IF;
+end;
 $$ LANGUAGE plpgsql;
 
 
@@ -26,6 +46,25 @@ BEGIN
   END IF;
 END;
 $$ LANGUAGE plpgsql;
+
+
+
+CREATE TRIGGER trigger_annuler_inscrip
+BEFORE INSERT on Inscription
+FOR EACH STATEMENT EXECUTE PROCEDURE annuler_inscrip();
+
+CREATE FUNCTION annuler_inscrip() RETURNS  trigger as $$
+    DECLARE
+        ligne Eleve;
+    BEGIN
+        SELECT INTO ligne from Inscription where id_eleve = NEW.id_eleve;
+        IF (select en_attente from Parent where id = ligne.id_parent) != FALSE THEN
+            raise notice 'le pere de l etudiant inscrit est en attente';
+            RETURN NULL;
+        END IF;
+    END;
+$$ LANGUAGE plpgsql;
+
 
 -- echec dans le cas ou le prix payé est < 8
 CREATE TRIGGER trigger_payement
@@ -112,13 +151,23 @@ AFTER INSERT ON Inscription
 FOR EACH ROW EXECUTE PROCEDURE prix_repartition();
 
 CREATE FUNCTION prix_repartition() RETURNS trigger as $$
+DECLARE prix_cagnotte INT; prix_enseignant INT; projet_recup Projet; date_actuelle myDate;
   BEGIN
+    SELECT * INTO projet_recup  FROM Projet WHERE id = NEW.id_projet LIMIT 1;
+    SELECT * INTO date_actuelle FROM myDate LIMIT 1;
+    IF(date_actuelle.date_fictive >= projet_recup.date_fin * (75/100) AND projet_recup.cagnotte < projet_recup.objectif) THEN
+        prix_cagnotte = 4;
+        prix_enseignant = 4;
+    ELSE
+        prix_cagnotte = 2;
+        prix_enseignant = 4;
+    end if;
     UPDATE Projet
-    SET cagnotte = cagnotte + 2
+    SET cagnotte = cagnotte + prix_cagnotte
     where id = NEW.id_projet;
 
     UPDATE Enseignant
-    SET somme_gagnee = somme_gagnee + 4
+    SET somme_gagnee = somme_gagnee + prix_enseignant
     where id = (select id_enseignant from Cours where Cours.id = NEW.id_cours);
 
     RAISE NOTICE 'distribution faite avec succes';
@@ -126,6 +175,9 @@ CREATE FUNCTION prix_repartition() RETURNS trigger as $$
     RETURN NEW;
   END;
 $$ LANGUAGE plpgsql;
+
+
+
 
 -- verification objectif insertion Projet
 
@@ -207,6 +259,7 @@ CREATE FUNCTION verification_reserve() RETURNS trigger as $$
 $$ LANGUAGE plpgsql;
 
 
+
 ----- triggers date fic ----- suppresion du projet
 CREATE TRIGGER trigger_remove_projet
 AFTER UPDATE ON myDate
@@ -224,3 +277,26 @@ CREATE FUNCTION remove_projet() RETURNS trigger AS $$
         end if;
     END;
 $$ LANGUAGE  plpgsql;
+
+
+CREATE TRIGGER update_date
+BEFORE UPDATE ON myDate
+for each statement execute procedure update_date();
+
+CREATE FUNCTION update_Date() RETURNS trigger as $$ -- a changer
+    DECLARE projet_boucle Projet;
+BEGIN
+    For projet_boucle IN SELECT * FROM Projet
+        LOOP
+            IF projet_boucle.cagnotte >= (75/100 * projet_boucle.objectif)  THEN
+                RAISE NOTICE 'La cagnotte a atteint % et a donc depassé 75% de l objectif', projet_boucle.cagnotte;
+            ELSIF projet_boucle.cagnotte >= (50/100 * projet_boucle.objectif)  THEN
+                RAISE NOTICE 'La cagnotte a atteint % et a donc depassé 50% de l objectif', projet_boucle.cagnotte;
+            ELSIF projet_boucle.cagnotte >= (25/100 * projet_boucle.objectif)  THEN
+                RAISE NOTICE 'La cagnotte a atteint % et a donc depassé 25% de l objectif', projet_boucle.cagnotte;
+
+            end if;
+        end loop;
+
+end;
+$$ LANGUAGE plpgsql;
