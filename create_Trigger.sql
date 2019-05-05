@@ -47,6 +47,25 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+
+
+CREATE TRIGGER trigger_annuler_inscrip
+BEFORE INSERT on Inscription
+FOR EACH STATEMENT EXECUTE PROCEDURE annuler_inscrip();
+
+CREATE FUNCTION annuler_inscrip() RETURNS  trigger as $$
+    DECLARE
+        ligne Eleve;
+    BEGIN
+        SELECT INTO ligne from Inscription where id_eleve = NEW.id_eleve;
+        IF (select en_attente from Parent where id = ligne.id_parent) != FALSE THEN
+            raise notice 'le pere de l etudiant inscrit est en attente';
+            RETURN NULL;
+        END IF;
+    END;
+$$ LANGUAGE plpgsql;
+
+
 -- echec dans le cas ou le prix payé est < 8
 CREATE TRIGGER trigger_payement
 BEFORE INSERT ON Inscription
@@ -240,6 +259,7 @@ CREATE FUNCTION verification_reserve() RETURNS trigger as $$
 $$ LANGUAGE plpgsql;
 
 
+
 ----- triggers date fic ----- suppresion du projet
 CREATE TRIGGER trigger_remove_projet
 AFTER UPDATE ON myDate
@@ -274,9 +294,6 @@ BEGIN
                 RAISE NOTICE 'La cagnotte a atteint % et a donc depassé 50% de l objectif', projet_boucle.cagnotte;
             ELSIF projet_boucle.cagnotte >= (25/100 * projet_boucle.objectif)  THEN
                 RAISE NOTICE 'La cagnotte a atteint % et a donc depassé 25% de l objectif', projet_boucle.cagnotte;
-
-            end if;
-            IF myDate.date_fictive >= projet_boucle.date_fin * (75/100) THEN
 
             end if;
         end loop;
