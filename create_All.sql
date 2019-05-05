@@ -4,7 +4,7 @@ CREATE TABLE myDate
 );
 
 CREATE TABLE Inscription( -- 1
-    id SERIAL,
+    id SERIAL ,
     prix INT NOT NULL,
     id_eleve INT NOT NULL,
     id_projet INT NOT NULL,
@@ -16,7 +16,7 @@ CREATE TABLE Inscription( -- 1
 );
 
 CREATE TABLE Cours( -- 2
-    id SERIAL,
+    id SERIAL ,
     date_cours TIMESTAMP NOT NULL,
     id_enseignant INT NOT NULL,
     PRIMARY KEY(id),
@@ -27,7 +27,7 @@ CREATE INDEX ind_date_cours ON Cours (date_cours);
 
 
 CREATE TABLE Projet( -- 3
-    id SERIAL,
+    id SERIAL ,
     nom VARCHAR(100) NOT NULL UNIQUE,
     date_debut TIMESTAMP NOT NULL,
     date_fin TIMESTAMP NOT NULL,
@@ -45,13 +45,13 @@ CREATE INDEX ind_solidarite_projet ON Projet(reserve_solidarite);
 
 
 CREATE TABLE Association( -- 4
-    id SERIAL,
+    id SERIAL PRIMARY KEY ,
     nom VARCHAR(100) NOT NULL UNIQUE,
     PRIMARY KEY(id)
 );
 
 CREATE TABLE User ( -- 5
-  id SERIAL,
+  id SERIAL PRIMARY KEY ,
   nom varchar(20) NOT NULL,
   prenom varchar(20) NOT NULL,
   sexe char(1) NOT NULL,
@@ -85,14 +85,14 @@ CREATE TABLE Enseignant
 
 CREATE TABLE Matiere
 ( -- 9
-    id SERIAL,
+    id SERIAL ,
     nom varchar(20) NOT NULL UNIQUE,
     PRIMARY KEY (id)
 );
 
 CREATE TABLE Ecole
 (-- 10
-    id SERIAL,
+    id SERIAL ,
     adresse varchar(100) NOT NULL,
     nom     varchar(20)  NOT NULL,
     PRIMARY KEY (id)
@@ -102,7 +102,7 @@ CREATE UNIQUE INDEX ind_nom_adresse_ecole ON Ecole (nom,adresse);
 
 CREATE  TABLE Archive
 (
-    id SERIAL,
+    id SERIAL ,
     nom VARCHAR(100) NOT NULL UNIQUE,
     date_debut TIMESTAMP NOT NULL,
     date_fin TIMESTAMP NOT NULL,
@@ -113,6 +113,8 @@ CREATE  TABLE Archive
     PRIMARY KEY(id),
     FOREIGN KEY(id_association) REFERENCES Association(id)
 );
+
+
 
 
 

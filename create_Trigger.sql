@@ -13,7 +13,6 @@ END;
 $$ LANGUAGE plpgsql;
 
 
-
 -- mise a joute de "en attente" des parents
 CREATE TRIGGER trigger_en_attente
 BEFORE UPDATE ON Parent
@@ -189,8 +188,7 @@ CREATE FUNCTION verification_cagnotte() RETURNS trigger as $$
       RETURN NULL;
     END IF;
   END;
-
---$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql;
 
 
 
@@ -206,8 +204,23 @@ CREATE FUNCTION verification_reserve() RETURNS trigger as $$
       RETURN NULL;
     END IF;
   END;
+$$ LANGUAGE plpgsql;
 
---$$ LANGUAGE plpgsql;
 
+----- triggers date fic ----- suppresion du projet
+CREATE TRIGGER trigger_remove_projet
+AFTER UPDATE ON myDate
+FOR EACH statement EXECUTE PROCEDURE remove_projet();
 
------ triggers date fic -----
+CREATE FUNCTION remove_projet() RETURNS trigger AS $$
+    DECLARE
+        ligne Projet;
+    BEGIN
+        SELECT INTO ligne from Projet limit 1;
+        IF date_fictive > ligne.date_fin THEN
+            raise notice 'supp projet en cours, ajout dans l archivage effectué';
+            INSERT INTO Archive (nom, date_debut, date_fin, objectif, cagnotte, reserve_solidarite, id_association) VALUES (ligne.nom, ligne.date_fin, ligne.date_fin, ligne.objectif,ligne.cagnotte, ligne.reserve_solidarite, ligne.id_association);
+            DELETE FROM Projet where id = (select min(id) from Projet);
+        end if;
+    END;
+$$ LANGUAGE  plpgsql;
